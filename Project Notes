@@ -1,0 +1,85 @@
+MINI Project on CICD -INTEGRATE GITHUB JENKINS AND DOCKER 
+
+Real life company scenario
+An developer writes code and pushes into the git hub repo, from that point the devops engineer work begins
+start with the devoloping infrastructure
+
+[image file.jpg]
+>>>>>>>>>>>>>>>>>>>>>>>>>
+INFRASTRUCTURE-PLANNING
+1. Setup the GitHub first including all files required , Push Code from Git bash to GitHub repo
+2. Using AWS , launch an Linux/Ubuntu server.
+3.Install the Jenkins on the server (Follow the installation steps mentioned in Jenkins documentation based in the os you took)
+
+[The pushed code from the local repo to git , and the Jenkins will auto trigger the code ]
+
+4. Install/start the docker on the same server
+5. We have to prepare two files, 1.Jenkinsfile 2.Dockerfile
+6.decide the application, on which application you are going to host the website-im taking Tomcat server
+7.Using Jenkins file , Dockerfile ill connect Tomcat server, will push the image to dockerhub
+
+[From Tomcat =Expose the Docker image by creating container then have to push to Dockerhub]
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Steps
+1.Launch instance ( 	ubuntu server, t2.medium, 20GIB storage)> Connect (username: ubuntu)
+2.Install Docker on ubuntu
+	^can install by creating an repo
+	^create an file - docker_install.sh
+paste this code in it > save > run by " sh docker_install.sh "
+
+
+----[docker_install.sh] Code file uploaded to my git repo
+
+3.Check the installation by systemctl status docker
+4.Install Jenkins
+	^ Goto > Jenkins documentation > Under Ubuntu/Debian > copy &paste each line one by one
+	^Install java >
+	^init 6 to restart serveruse as it is
+	^Enable and start Jenkins
+	^laucnch Jenkins by " ip address:8080" >Log in with admin password
+	^Install suggested plugins  + also add plugin "stage view"
+5. Creation of Jenkinsfile
+	^New item "name" > Pipeline >  add description
+	^Under Definition > Select : Pipeline script
+	^Manage plugins > "Eclipse Temurin installer" > install
+	^Manage Jenkins > Tools > Add JDK >"Name" > install automaticly > add installer > click on " install from adoptium.net" 
+	^Version "jdk-11.0.16+8"
+	^Scroll down > maven  > 'name' > version 3.9.6 > apply > save it
+
+-----	[Jenkinsfile] the pipeline Code file uploaded to my git repo
+	^copy and paste the code and paste under pipeline script
+	^make add adjustments before evey project if you want to connect to jenkins
+	^Dashboard >build ( if all stages are in green)
+	^check       cd /var/lib/jenkins>workspace
+	^you can see your project folder ( in this all yout git files in the repo are clonned)
+	^also an extra folder is should be created "webapp" ( it contains an target folder inside that and .war file will created)
+6.Creation of Dockerfile
+-----	[Dockerfile] the Code file uploaded to my git repo
+	^If docker file is created then mention the steps in pipe line also by editing it 
+7. Permissions to run docker via jenkins
+
+	^cat /etc/group
+	    ^while creating jenkins and docker automaticly some names will display eg:docker:x:988: jenkins:x:113:
+	^give permision now by adding docker group to jenkins ( howwww)
+		^usermod -aG docker jenkins -run this
+		^visudo  > under user privillages > under root ALL=(ALL:ALL)ALL > write " jenkins ALL=(ALL:ALL) NOPASSWD: /usr/bin/docker
+^save by ctrl+o enter ctrl=x
+	^systemctl restart Jenkins
+	^build now in Jenkins
+8. Keep in mind notes
+	^also can check by giving cmd "docker images"
+	^we gave the cmd in Docker file where to copy it it will stores there
+	^ipaddress:host port/webapp/
+9. Do more with GitHub
+	^goto > configuration > pipeline script from SCM >url of git repo > check path main or master
+	^Poll SCM * * * * *
+10.About login docker via Jenkins code which is stored in gitrepo 
+	EXTRA ONE TIME WORK	:Manage Jenkins > credentials > global > add credentials > " mention your docker hub username" > "original dockerhub passwd" > under ID (docker-hub-dredentials) >save 
+
+		^the file under GitHub/project you have to change as per your requirement including port, image id, username, Container name everything which you need 
+
+
+how to create an credential using pipeline script
+ Goto >dashboard>projectname>pipeline syntax > click on " bind credentials to variable" > under binfings >add > "username password (repeated).
+username variable = username_docker
+password ariable=password_docker              >Generate pipeline script
