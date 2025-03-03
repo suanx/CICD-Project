@@ -20,5 +20,15 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+        stage('Build') {
+            steps {
+                sh 'docker build -t usernameofdockerhub/imagenameyourown .'
+            }
+        }
+        stage('Container Creation') {
+            steps {
+                sh 'docker run -it -d --name c1 -p 9000:8080 imagesid'
+            }
+        }
     }
 }
