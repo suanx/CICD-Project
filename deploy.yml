@@ -13,7 +13,7 @@ spec:
         app: myapp
     spec:
       containers:
-        - image: suanx/sugfxindia
+        - image: suanx/gfx:latest
           name: c1
           ports:
             - containerPort: 80
