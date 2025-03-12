@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'microk8s.kubectl apply -f Deploy.yaml'  // Corrected syntax
+                sh 'microk8s.kubectl apply -f deploy.yaml'  // Corrected syntax
             }
         }
     }
