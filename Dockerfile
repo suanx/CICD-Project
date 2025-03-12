@@ -1,4 +1,10 @@
-FROM nginx:latest                           # Use the latest Nginx image from Docker Hub
-COPY index.html /usr/share/nginx/html/index.html  # Copy index.html to Nginx's default web directory
-EXPOSE 80                                   # Expose port for HTTP traffic
-CMD ["nginx", "-g", "daemon off;"]          # Start Nginx in the foreground to keep the container running
+FROM nginx:latest  
+
+# Copy the custom index.html file  
+COPY index.html /usr/share/nginx/html/index.html  
+
+# Expose port 80 for web access  
+EXPOSE 80  
+
+# Start Nginx in the foreground  
+CMD ["nginx", "-g", "daemon off;"]
