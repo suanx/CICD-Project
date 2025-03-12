@@ -11,15 +11,15 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'  // Corrected build command
+                sh 'docker build -t $DOCKER_IMAGE .'  // Optional: Add --no-cache if needed
             }
         }
         stage('Login to Docker Hub') {  
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', passwordVariable: 'passdochub', usernameVariable: 'usernamedochub')]) {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_PASS', passwordVariable: 'password', usernameVariable: 'username')]) {
                         sh '''
-                            echo "$passdochub" | docker login -u "$usernamedochub" --password-stdin
+                            echo "$password" | docker login -u "$username" --password-stdin
                             echo "Docker login successful"
                         '''
                     }
@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'microk8s.kubectl apply -f deploy.yaml'  // Corrected syntax
+                sh 'microk8s.kubectl apply -f deploy.yaml'
             }
         }
     }
